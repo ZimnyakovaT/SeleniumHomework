@@ -17,11 +17,12 @@ namespace Homework1
         public void start()
         {
             driver = new ChromeDriver();
+            driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0,0,10);
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
         }
 
 
-        [Test]
+        [Test, Order(1)]
         public void Test1()
         {
             driver.Url = "http://www.google.com/";
@@ -30,6 +31,17 @@ namespace Homework1
             driver.FindElement(By.Name("btnK")).Click();
             wait.Until(ExpectedConditions.TitleIs("webdriver - Поиск в Google"));
         }
+
+        [Test, Order(2)]
+        public void Test2()
+        {
+            driver.Url = "http://localhost/litecart/admin/login.php";
+            driver.FindElement(By.Name("username")).SendKeys("admin");
+            driver.FindElement(By.Name("password")).SendKeys("admin");
+            driver.FindElement(By.Name("login")).Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.ClassName("logotype"))));
+        }
+
 
         [TearDown]
         public void stop()
