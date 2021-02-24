@@ -60,7 +60,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Homework1.cs" />
+    <Compile Include="Test2.cs" />
+    <Compile Include="TestBase.cs" />
+    <Compile Include="Test1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
