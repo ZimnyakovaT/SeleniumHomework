@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Test3.cs" />
     <Compile Include="Test2.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="Test1.cs" />
