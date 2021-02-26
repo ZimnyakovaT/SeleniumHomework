@@ -41,7 +41,7 @@ namespace Homework1
         {
             driver.Url = "http://localhost/litecart/";
 
-            var ducks = driver.FindElements(By.XPath($"//*[@class='product column shadow hover-light']"));
+            var ducks = driver.FindElements(By.XPath($"//*[@class='image-wrapper']"));
             var duckscount = ducks.Count();
             int stickercount = 0;
             foreach (var duck in ducks)
