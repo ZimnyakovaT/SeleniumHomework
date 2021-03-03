@@ -11,6 +11,7 @@ using OpenQA.Selenium.IE;
 using NUnit.Framework;
 using System.Globalization;
 
+
 namespace Homework1
 {
     [TestFixture]
@@ -186,6 +187,19 @@ namespace Homework1
             }
 
         }
+
+        private string[] rgb(string regularpricecolor)
+        {
+            var t1 = regularpricecolor.Replace("rgba(", "")
+                   .Replace(")", "")
+                   .Replace(" ", "")
+                   .Split(',');
+            if (t1.Length != 4)
+                throw new Exception("Не удалось извлечь RGB-значение из цвета!");
+            return t1;
+        }
+
+
         [Test, Order(7)]
         public void Test_7()
         {
@@ -196,17 +210,23 @@ namespace Homework1
                 var regularpricecolor = ducks[j].GetCssValue("color");
                 var textdecoration = ducks[j].GetCssValue("text-decoration-line");
                 var regularsize = ducks[j].GetCssValue("font-size").Replace("px", "").Trim();
-                var regularsize_ = Convert.ToDecimal(regularsize,new CultureInfo("en-US"));
+                var regularsize_ = Convert.ToDecimal(regularsize, new CultureInfo("en-US"));
 
                 var saleprice = driver.FindElement(By.CssSelector(".campaign-price"));
                 var salepricecolor = saleprice.GetCssValue("color");
+
+                var t1 = rgb(regularpricecolor); //parse grey
+                var t2 = t1[0] == t1[1] && t1[1]==t1[2];
+                t1 = rgb(salepricecolor); //parse red
+                var t3 = t1[1] == t1[2];
+
                 var salepricebold = saleprice.GetCssValue("font-weight");
                 var salepricesize =saleprice.GetCssValue("font-size").Replace("px", "").Trim();
                 var salepricesize_= Convert.ToDecimal(salepricesize,new CultureInfo("en-US"));
 
-                Assert.AreEqual(regularpricecolor, "rgba(119, 119, 119, 1)");//task 10.в
+                Assert.AreEqual(t2, true);//task 10.в
                 Assert.AreEqual(textdecoration, "line-through");//task 10.в
-                Assert.AreEqual(salepricecolor, "rgba(204, 0, 0, 1)");//task 10.г
+                Assert.AreEqual(t3, true);//task 10.г
                 Assert.AreEqual(salepricebold, "700");//task 10.г
                 if (regularsize_ < salepricesize_)
                 {
@@ -226,9 +246,14 @@ namespace Homework1
                 var salepricesizenew = driver.FindElement(By.CssSelector(".campaign-price")).GetCssValue("font-size").Replace("px", "").Trim();
                 var salepricesizenew_ = Convert.ToDecimal(salepricesizenew, new CultureInfo("en-US"));
 
-                Assert.AreEqual(regularpricecolor_, "rgba(102, 102, 102, 1)");//task 10.в
+                t1 = rgb(regularpricecolor_);
+                t2 = t1[0] == t1[1] && t1[1] == t1[2];
+                t1 = rgb(salepricecolor_);
+                t3 = t1[1] == t1[2];
+
+                Assert.AreEqual(t2, true);//task 10.в
                 Assert.AreEqual(textdecoration_, "line-through");//task 10.в
-                Assert.AreEqual(salepricecolor_, "rgba(204, 0, 0, 1)");//task 10.г
+                Assert.AreEqual(t3, true);//task 10.г
                 Assert.AreEqual(salepricebold_, "700");//task 10.г
                 if (regularsizenew_ < salepricesizenew_)
                 {
