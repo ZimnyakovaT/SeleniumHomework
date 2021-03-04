@@ -17,6 +17,8 @@ namespace Homework1
     [TestFixture]
     [Parallelizable(scope: ParallelScope.All)]
     public class Test3 : TestBase
+
+
     {
         [SetUp]
         public override void start()
@@ -265,5 +267,97 @@ namespace Homework1
 
             }
         }
+
+        [Test, Order(8)]
+        public void Test_8()
+        {
+            driver.Url = "http://localhost/litecart/";
+            var newuser = driver.FindElement(By.XPath($"//*[@id='box-account-login']//a"));
+            newuser.Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+
+            RegistrationUser();
+            UserLogout();
+            UserLogin();
+            UserLogout();
+
+        }
+
+        /// <summary>
+        /// Рандомные юзеры
+        /// </summary>
+        /// <returns></returns>
+        public string RandomUser()
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var stringChars = new char[8];
+            var random = new Random();
+
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            var finalString = new String(stringChars);
+            return finalString;
+        }
+
+        private string email;
+        private string password;
+        /// <summary>
+        /// заполняем обязательные поля
+        /// </summary>
+        public void RegistrationUser()
+        {
+            
+            var UserData = driver.FindElement(By.Name("firstname"));
+            UserData.SendKeys(RandomUser());
+            UserData = driver.FindElement(By.Name("lastname"));
+            UserData.SendKeys(RandomUser());
+            UserData = driver.FindElement(By.Name("address1"));
+            UserData.SendKeys(RandomUser());
+            UserData = driver.FindElement(By.Name("postcode"));
+            UserData.SendKeys("660118");
+            UserData = driver.FindElement(By.Name("city"));
+            UserData.SendKeys(RandomUser());
+            UserData = driver.FindElement(By.Name("email"));
+            email = RandomUser() + "@yandex.ru";
+            UserData.SendKeys(email);
+            UserData = driver.FindElement(By.Name("phone"));
+            UserData.SendKeys("9232880000");
+            UserData = driver.FindElement(By.Name("password"));
+            password = RandomUser();
+            UserData.SendKeys(password);
+            UserData = driver.FindElement(By.Name("confirmed_password"));
+            UserData.SendKeys(password);
+            UserData = driver.FindElement(By.Name("create_account"));
+            UserData.Click();
+        }
+
+        /// <summary>
+        /// User Logout
+        /// </summary>
+        public void UserLogout()
+        {
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.Id("box-account"))));
+            var logout = driver.FindElements(By.CssSelector("[id=box-account] a"))[3];
+            logout.Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("[id=box-account-login] a"))));
+        }
+
+        /// <summary>
+        /// User Login
+        /// </summary>
+        public void UserLogin()
+        {
+            var logindata = driver.FindElement(By.CssSelector("input[type=text]"));
+            logindata.SendKeys(email);
+            logindata = driver.FindElement(By.CssSelector("input[type=password]"));
+            logindata.SendKeys(password);
+            logindata = driver.FindElement(By.Name("login"));
+            logindata.Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.Id("box-account"))));
+        }
+
     }
 }
