@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
@@ -10,6 +10,7 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using NUnit.Framework;
 using System.Globalization;
+using System.Threading;
 
 
 namespace Homework1
@@ -304,6 +305,7 @@ namespace Homework1
 
         private string email;
         private string password;
+        private string name;
         /// <summary>
         /// заполняем обязательные поля
         /// </summary>
@@ -359,5 +361,98 @@ namespace Homework1
             wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.Id("box-account"))));
         }
 
+        [Test, Order(9)]
+        public void Test_9()
+        {
+            AdminLogin();
+
+            var catalogButton = driver.FindElements(By.CssSelector(".name"))[1];
+            catalogButton.Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            var addNewProduct = driver.FindElements(By.CssSelector(".button"))[1];
+            addNewProduct.Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+
+            //заполняем вкладку1 по продукту
+            FillDataGeneral();
+
+            //заполняем вкладку2 по продукту
+            driver.FindElement(By.CssSelector("[href='#tab-information']")).Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("[name=manufacturer_id]"))));
+            FillDataInformation();
+
+            //заполняем вкладку3 по продукту
+            driver.FindElement(By.CssSelector("[href='#tab-prices']")).Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("[name = purchase_price]"))));
+            FillDataPrices();
+            SaveData();
+
+            //проверка что элемент сохранился
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            var elements = driver.FindElements(By.CssSelector(".dataTable a"));
+            List<string> ElementNames = new List<string>();
+            foreach (var element in elements)
+            {
+                var x22 = element.GetAttribute("textContent");
+                ElementNames.Add(element.GetAttribute("textContent"));
+            }
+
+            if (ElementNames.Contains(name))
+            {
+                Assert.AreEqual(0,0);
+            }
+            else throw new Exception("Элемент отсутствует в списке!");
+        }
+
+        public void AdminLogin()
+        {
+            driver.Url = "http://localhost/litecart/admin/login.php";
+            driver.FindElement(By.Name("username")).SendKeys("admin");
+            driver.FindElement(By.Name("password")).SendKeys("admin");
+            driver.FindElement(By.Name("login")).Click();
+            //Cookie testCookie = driver.Manage().Cookies.GetCookieNamed("language_code");
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.ClassName("logotype"))));
+
+        }
+
+        public void FillDataGeneral()
+        {
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElements(By.CssSelector("[type=radio]"))[0]));
+            name = RandomUser();
+            driver.FindElement(By.CssSelector("[name='name[en]']")).SendKeys(name);
+            Thread.Sleep(2000);
+            driver.FindElements(By.CssSelector("[type=radio]"))[0].Click();
+            driver.FindElement(By.CssSelector("[name=code]")).SendKeys(RandomUser());
+            driver.FindElement(By.CssSelector("[name=quantity]")).SendKeys("45");
+            driver.FindElement(By.CssSelector("[name=sold_out_status_id]")).Click();
+            var t1 = driver.FindElement(By.CssSelector("[name=sold_out_status_id]"));
+            wait.Until(ExpectedConditions.ElementToBeClickable(t1.FindElements(By.CssSelector("option"))[2]));
+            t1.FindElements(By.CssSelector("option"))[2].Click();
+            string FilePath = AppDomain.CurrentDomain.BaseDirectory+$"TestData\\flowers.png";
+            driver.FindElement(By.CssSelector("[type=file]")).SendKeys(FilePath);
+        }
+
+        public void FillDataInformation()
+        {
+            driver.FindElement(By.CssSelector("[name=manufacturer_id]")).Click();
+            var t1 = driver.FindElement(By.CssSelector("[name=manufacturer_id]"));
+            t1.FindElements(By.CssSelector("option"))[1].Click();
+            driver.FindElement(By.CssSelector("[name='short_description[en]']")).SendKeys("Test Test Test");
+            driver.FindElement(By.CssSelector(".trumbowyg-editor")).SendKeys("Test Test Test Test");
+        }
+
+        public void FillDataPrices()
+        {
+            driver.FindElement(By.CssSelector("[name=purchase_price]")).Clear();
+            driver.FindElement(By.CssSelector("[name=purchase_price]")).SendKeys("45");
+            driver.FindElement(By.CssSelector("[name='prices[USD]']")).SendKeys("65");
+        }
+
+
+        public void SaveData()
+        {
+            driver.FindElement(By.CssSelector("[name=save]")).Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+        }
     }
 }
