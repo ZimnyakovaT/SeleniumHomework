@@ -306,6 +306,7 @@ namespace Homework1
         private string email;
         private string password;
         private string name;
+        private int counter_;
         /// <summary>
         /// заполняем обязательные поля
         /// </summary>
@@ -453,6 +454,80 @@ namespace Homework1
         {
             driver.FindElement(By.CssSelector("[name=save]")).Click();
             wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+        }
+
+        [Test, Order(10)]
+        public void Test_10()
+        {
+            //open page
+            driver.Url = "http://localhost/litecart/";
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector(".general-0"))));
+
+            AddToCart();
+            GoToMainPage();
+            AddToCart();
+            GoToMainPage();
+            AddToCart();
+
+            driver.FindElements(By.CssSelector(".link"))[0].Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[name=confirm_order]")));
+
+            //костыль, чтоб не крутились картинки
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector(".shortcuts li a")));
+            var inacts = driver.FindElements(By.CssSelector(".shortcuts li a"));
+            foreach (var inact in inacts)
+            {
+                inact.Click();
+                Thread.Sleep(500);
+            }
+
+            inacts[0].Click();
+
+            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[name=remove_cart_item]")));
+
+            var x1 = driver.FindElements(By.CssSelector(".sku"));
+            int x2= Int32.Parse(x1.Count().ToString());
+
+            for (int i = 0; i < (x2-1); i++)
+            {
+                var table = driver.FindElement(By.CssSelector(".dataTable"));
+                var t1 = driver.FindElements(By.Name("remove_cart_item"));
+                driver.FindElements(By.Name("remove_cart_item"))[0].Click();
+                wait.Until(ExpectedConditions.StalenessOf(table));
+            }
+        }
+
+        public void AddToCart()
+        {
+            //click first product
+            driver.FindElements(By.CssSelector("li a.link"))[0].Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+
+            //check  counter of products
+            var counter = driver.FindElements(By.CssSelector(".quantity"))[0].GetAttribute("textContent");
+            counter_ = Int32.Parse(counter);
+
+            //if size is visible
+            var isselectpresent = driver.FindElements(By.CssSelector("[name='options[Size]'"));
+            if (isselectpresent.Count > 0)
+            {
+                var select = driver.FindElement(By.CssSelector("[name='options[Size]'"));
+                select.Click();
+                select = select.FindElements(By.CssSelector("option"))[2];
+                select.Click();
+            }
+
+            //add to cart
+            driver.FindElement(By.Name("add_cart_product")).Click();
+            counter_++;
+            wait.Until(ExpectedConditions.TextToBePresentInElement(driver.FindElement(By.CssSelector(".quantity")), (counter_.ToString())));
+        }
+
+        public void GoToMainPage()
+        {
+            //goto main page
+            driver.Navigate().Back();
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector(".general-0"))));
         }
     }
 }
