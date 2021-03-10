@@ -219,13 +219,13 @@ namespace Homework1
                 var salepricecolor = saleprice.GetCssValue("color");
 
                 var t1 = rgb(regularpricecolor); //parse grey
-                var t2 = t1[0] == t1[1] && t1[1]==t1[2];
+                var t2 = t1[0] == t1[1] && t1[1] == t1[2];
                 t1 = rgb(salepricecolor); //parse red
                 var t3 = t1[1] == t1[2];
 
                 var salepricebold = saleprice.GetCssValue("font-weight");
-                var salepricesize =saleprice.GetCssValue("font-size").Replace("px", "").Trim();
-                var salepricesize_= Convert.ToDecimal(salepricesize,new CultureInfo("en-US"));
+                var salepricesize = saleprice.GetCssValue("font-size").Replace("px", "").Trim();
+                var salepricesize_ = Convert.ToDecimal(salepricesize, new CultureInfo("en-US"));
 
                 Assert.AreEqual(t2, true);//task 10.в
                 Assert.AreEqual(textdecoration, "line-through");//task 10.в
@@ -312,7 +312,7 @@ namespace Homework1
         /// </summary>
         public void RegistrationUser()
         {
-            
+
             var UserData = driver.FindElement(By.Name("firstname"));
             UserData.SendKeys(RandomUser());
             UserData = driver.FindElement(By.Name("lastname"));
@@ -400,7 +400,7 @@ namespace Homework1
 
             if (ElementNames.Contains(name))
             {
-                Assert.AreEqual(0,0);
+                Assert.AreEqual(0, 0);
             }
             else throw new Exception("Элемент отсутствует в списке!");
         }
@@ -429,7 +429,7 @@ namespace Homework1
             var t1 = driver.FindElement(By.CssSelector("[name=sold_out_status_id]"));
             wait.Until(ExpectedConditions.ElementToBeClickable(t1.FindElements(By.CssSelector("option"))[2]));
             t1.FindElements(By.CssSelector("option"))[2].Click();
-            string FilePath = AppDomain.CurrentDomain.BaseDirectory+$"TestData\\flowers.png";
+            string FilePath = AppDomain.CurrentDomain.BaseDirectory + $"TestData\\flowers.png";
             driver.FindElement(By.CssSelector("[type=file]")).SendKeys(FilePath);
         }
 
@@ -486,9 +486,9 @@ namespace Homework1
             wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[name=remove_cart_item]")));
 
             var x1 = driver.FindElements(By.CssSelector(".sku"));
-            int x2= Int32.Parse(x1.Count().ToString());
+            int x2 = Int32.Parse(x1.Count().ToString());
 
-            for (int i = 0; i < (x2-1); i++)
+            for (int i = 0; i < (x2 - 1); i++)
             {
                 var table = driver.FindElement(By.CssSelector(".dataTable"));
                 var t1 = driver.FindElements(By.Name("remove_cart_item"));
@@ -529,5 +529,35 @@ namespace Homework1
             driver.Navigate().Back();
             wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector(".general-0"))));
         }
+
+        [Test, Order(11)]
+        public void Test_11()
+        {
+            login();
+            driver.FindElements(By.CssSelector("[id=app-]"))[2].Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            driver.FindElements(By.CssSelector(".fa-pencil"))[2].Click();
+            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            var links = driver.FindElements(By.CssSelector(".fa-external-link"));
+            for (var i = 0; i < links.Count; i++)
+            {
+                var mainWindow = driver.CurrentWindowHandle;
+                ICollection<string> oldWindows = driver.WindowHandles;
+                driver.FindElements(By.CssSelector(".fa-external-link"))[i].Click();
+                wait.Until(wd => wd.WindowHandles.Count > oldWindows.Count); //ждем пока откроется новое окно
+
+                foreach (string window in driver.WindowHandles)
+                {
+                    if (mainWindow != window)
+                    {
+                        driver.SwitchTo().Window(window);
+                        break;
+                    }
+                }
+                driver.Close();
+                driver.SwitchTo().Window(mainWindow);
+            }
+        }
+
     }
 }
