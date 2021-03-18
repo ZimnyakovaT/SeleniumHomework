@@ -2,10 +2,12 @@
 using System;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Support.Events;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using NUnit.Framework;
+using System.Drawing.Imaging;
 
 namespace Homework1
 {
@@ -14,19 +16,22 @@ namespace Homework1
     public class Test1 : TestBase
     {
 
-        [SetUp]
+       [SetUp]
         public override void start()
         {
             
-            if (tlDriver.Value != null)
+            /*if (tlDriver.Value != null)
             {
                 driver = tlDriver.Value;
                 wait = new WebDriverWait(driver, new TimeSpan(0, 0, 10));
                 return;
-            }
+            }*/
             ChromeOptions options = new ChromeOptions();
             options.AddArguments("start-fullscreen");
-            driver = new ChromeDriver(options);
+            driver = new EventFiringWebDriver( new ChromeDriver(options));
+            driver.FindingElement += (sender, e) => Console.WriteLine(e.FindMethod);
+            driver.FindElementCompleted += (sender, e) => Console.WriteLine(e.FindMethod + " found");
+            driver.ExceptionThrown += (sender, e) => Console.WriteLine(e.ThrownException);
             tlDriver.Value = driver;
             wait = new WebDriverWait(driver, new TimeSpan(0, 0, 10));
 

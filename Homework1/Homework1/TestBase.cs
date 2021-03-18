@@ -5,17 +5,19 @@ using System.Runtime;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Support.Events;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 
 namespace Homework1
 {
     public class TestBase
     {
         public static ThreadLocal<IWebDriver> tlDriver = new ThreadLocal<IWebDriver>();
-        public IWebDriver driver;
+        public EventFiringWebDriver driver;
         public WebDriverWait wait;
 
         public bool IsElementPresent(IWebDriver driver, By locator)
@@ -50,13 +52,17 @@ namespace Homework1
             //options.RequireWindowFocus = false; //Возвращает или задает значение, показывающее, требуется ли фокусировку окна браузера перед взаимодействием с элементами.
             //options.BinaryLocation= @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe";
             //options.AddArguments("start-maximized");
-            if (tlDriver.Value != null)
+            EventFiringWebDriver driver = new EventFiringWebDriver(new ChromeDriver());
+            driver.FindingElement += (sender, e) => Console.WriteLine(e.FindMethod);
+            driver.FindElementCompleted += (sender, e) => Console.WriteLine(e.FindMethod + " found");
+            driver.ExceptionThrown += (sender, e) => Console.WriteLine(e.ThrownException);
+            /*if (tlDriver.Value != null)
             {
                 driver = tlDriver.Value;
                 wait = new WebDriverWait(driver, new TimeSpan(0,0,60));
                 return;
-            }
-            driver = new ChromeDriver();
+            }*/
+            driver = new EventFiringWebDriver(new ChromeDriver());
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(60); //неявные ожидания
             tlDriver.Value = driver;
             wait = new WebDriverWait(driver, new TimeSpan(0, 0, 60));
@@ -70,6 +76,24 @@ namespace Homework1
         [TearDown]
         public void stop()
         {
+            var testStatus = TestContext.CurrentContext.Result.Outcome.Status;
+
+            switch (testStatus)
+            {
+                case TestStatus.Failed:
+                    driver.GetScreenshot().SaveAsFile(AppDomain.CurrentDomain.BaseDirectory +$"{DateTime.Now.ToString().Replace(":", "-")}screen.png", ScreenshotImageFormat.Png);
+                    Console.WriteLine("FAILED!!!");
+                    break;
+                case TestStatus.Passed:
+                    Console.WriteLine("SUCCESS!!!");
+                    break;
+            }
+            //тут падает
+            var t3 = driver.Manage().Logs.GetLog(LogType.Browser);
+            /*foreach (LogEntry l in driver.Manage().Logs.GetLog("browser"))
+            {
+                Console.WriteLine(l);
+            }*/
             driver.Quit();
             driver = null;
         }

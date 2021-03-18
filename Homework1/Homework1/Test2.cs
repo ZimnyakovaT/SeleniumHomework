@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Support.Events;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
@@ -20,13 +21,13 @@ namespace Homework1
         public override void start()
         {
 
-            if (tlDriver.Value != null)
+           /* if (tlDriver.Value != null)
             {
                 driver = tlDriver.Value;
                 wait = new WebDriverWait(driver, new TimeSpan(0, 0, 60));
                 return;
-            }
-            driver = new InternetExplorerDriver();
+            }*/
+            driver = new EventFiringWebDriver( new InternetExplorerDriver());
             driver.Manage().Window.FullScreen();
             tlDriver.Value = driver;
             wait = new WebDriverWait(driver, new TimeSpan(0, 0, 60));

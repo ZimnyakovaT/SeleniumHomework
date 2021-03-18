@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Support.Events;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
@@ -27,13 +28,13 @@ namespace Homework1
 
             if (tlDriver.Value != null)
             {
-                driver = tlDriver.Value;
+                driver = (EventFiringWebDriver)tlDriver.Value;
                 wait = new WebDriverWait(driver, new TimeSpan(0, 0, 10));
                 return;
             }
             ChromeOptions options = new ChromeOptions();
             //options.AddArguments("start-fullscreen");
-            driver = new ChromeDriver(options);
+            driver = new EventFiringWebDriver (new ChromeDriver(options));
             tlDriver.Value = driver;
             wait = new WebDriverWait(driver, new TimeSpan(0, 0, 20));
 
