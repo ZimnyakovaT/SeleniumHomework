@@ -26,7 +26,7 @@ namespace Homework1
             {
                 //driver.FindElement(locator);
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
-                IWebElement element = wait.Until(ExpectedConditions.ElementExists(locator));
+              //  IWebElement element = wait.Until(ExpectedConditions.ElementExists(locator));
                 return true;
             }
             catch (InvalidSelectorException ex)
@@ -89,11 +89,11 @@ namespace Homework1
                     break;
             }
             //тут падает
-            var t3 = driver.Manage().Logs.GetLog(LogType.Browser);
-            /*foreach (LogEntry l in driver.Manage().Logs.GetLog("browser"))
+            var t3 = driver.Manage().Logs.AvailableLogTypes;
+            foreach (LogEntry l in driver.Manage().Logs.GetLog(LogType.Browser))
             {
                 Console.WriteLine(l);
-            }*/
+            }
             driver.Quit();
             driver = null;
         }

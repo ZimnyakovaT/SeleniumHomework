@@ -10,6 +10,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using NUnit.Framework;
+using SeleniumExtras.WaitHelpers;
 
 namespace Homework1
 {
@@ -43,7 +44,8 @@ namespace Homework1
             driver.FindElement(By.Name("password")).SendKeys("admin");
             driver.FindElement(By.Name("login")).Click();
             Cookie testCookie = driver.Manage().Cookies.GetCookieNamed("language_code");
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.ClassName("logotype"))));
+            wait.Until(wd => driver.FindElement(By.ClassName("logotype")).Displayed && driver.FindElement(By.ClassName("logotype")).Enabled);
+            // wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.ClassName("logotype"))));
 
             var menuItems = driver.FindElements(By.Id("app-"));
             for (var i=0; i< menuItems.Count; i++)
@@ -52,7 +54,8 @@ namespace Homework1
 
                 menuItems.ToArray()[i].Click(); //кликаем на пункты основного меню
                 var menuItem = driver.FindElement(By.XPath($"//*[@id='app-'][{i + 1}]")); //заново находим локатор пункта меню
-                wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1")))); //ждем когда отобразятся вложенные пункты 
+                wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+                //  wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1")))); //ждем когда отобразятся вложенные пункты 
                 var menusubItems = menuItem.FindElements(By.CssSelector("li")); //ищем вложенные 
                 for  (var j=0; j< menusubItems.Count; j++)
                 {
@@ -60,7 +63,7 @@ namespace Homework1
                     menusubItems = menuItem.FindElements(By.CssSelector("li"));
                     wait.Until(ExpectedConditions.ElementToBeClickable(menusubItems.ToArray()[j])); //ждем загрузку вложенных
                     menusubItems.ToArray()[j].Click(); //кликаем по вложенному
-                    wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+                  //  wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
                 }
             }
 

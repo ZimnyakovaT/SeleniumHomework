@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Support.Events;
 using OpenQA.Selenium.Chrome;
@@ -19,13 +20,14 @@ namespace Homework1
        [SetUp]
         public override void start()
         {
-            
+
             /*if (tlDriver.Value != null)
             {
                 driver = tlDriver.Value;
                 wait = new WebDriverWait(driver, new TimeSpan(0, 0, 10));
                 return;
             }*/
+            
             ChromeOptions options = new ChromeOptions();
             options.AddArguments("start-fullscreen");
             driver = new EventFiringWebDriver( new ChromeDriver(options));
@@ -44,10 +46,17 @@ namespace Homework1
         {
             driver.Url = "http://www.google.com/";
             driver.FindElement(By.Name("q")).SendKeys("webdriver");
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.Name("btnK"))));
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
+            wait.Until(wd => driver.FindElement(By.Name("btnK")).Displayed && driver.FindElement(By.Name("btnK")).Enabled);
             driver.FindElement(By.Name("btnK")).Click();
-            wait.Until(ExpectedConditions.TitleIs("webdriver - Поиск в Google"));
+            // if (driver.FindElement(By.Name("btnK")).Displayed)
+            // {
+            //     driver.FindElement(By.Name("btnK")).Click();
+            // }
+            //   wait.Until(ExpectedConditions.TitleIs("webdriver - Поиск в Google"));
         }
 
     }
+
 }
+

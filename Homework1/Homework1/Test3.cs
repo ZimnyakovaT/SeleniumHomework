@@ -12,6 +12,7 @@ using OpenQA.Selenium.IE;
 using NUnit.Framework;
 using System.Globalization;
 using System.Threading;
+using SeleniumExtras.WaitHelpers;
 
 
 namespace Homework1
@@ -34,7 +35,7 @@ namespace Homework1
             }
             ChromeOptions options = new ChromeOptions();
             //options.AddArguments("start-fullscreen");
-            driver = new EventFiringWebDriver (new ChromeDriver(options));
+            driver = new EventFiringWebDriver(new ChromeDriver(options));
             tlDriver.Value = driver;
             wait = new WebDriverWait(driver, new TimeSpan(0, 0, 20));
 
@@ -72,7 +73,8 @@ namespace Homework1
             driver.FindElement(By.Name("password")).SendKeys("admin");
             driver.FindElement(By.Name("login")).Click();
             Cookie testCookie = driver.Manage().Cookies.GetCookieNamed("language_code");
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.ClassName("logotype"))));
+            wait.Until(wd => driver.FindElement(By.ClassName("logotype")).Displayed && driver.FindElement(By.ClassName("logotype")).Enabled);
+            //  wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.ClassName("logotype"))));
         }
         public void CheckSortAsc(List<string> countryNames)
         {
@@ -90,7 +92,8 @@ namespace Homework1
         {
             login();
             driver.Url = "http://localhost/litecart/admin/?app=countries&doc=countries";
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+            //  wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
             var countries = driver.FindElements(By.CssSelector(".row"));
             List<string> countryNames = new List<string>();
 
@@ -110,7 +113,8 @@ namespace Homework1
                 if (t1[5].GetAttribute("textContent") != "0")
                 {
                     t1[4].FindElement(By.CssSelector("a")).Click();
-                    wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+                    wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+                    //   wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
                     var states = driver.FindElements(By.CssSelector("#table-zones tr"));
                     var i = 0;
                     List<string> statesNames = new List<string>();
@@ -123,7 +127,8 @@ namespace Homework1
                     }
                     CheckSortAsc(statesNames);
                     driver.Navigate().Back();
-                    wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+                    wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+                    //   wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
                     countries = driver.FindElements(By.CssSelector(".row"));
                 }
             }
@@ -136,14 +141,15 @@ namespace Homework1
         {
             login();
             driver.Url = "http://localhost/litecart/admin/?app=geo_zones&doc=geo_zones";
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            //  wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
             var countries = driver.FindElements(By.CssSelector(".row"));
 
             for (var j = 0; j < countries.Count(); j++)
             {
                 List<string> geoZones = new List<string>();
                 countries[j].FindElement(By.CssSelector("a")).Click();
-                wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+                wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+                //  wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
 
                 var zones = driver.FindElement(By.Id("table-zones")).FindElements(By.CssSelector("tr"));
                 foreach (var zone in zones)
@@ -181,7 +187,8 @@ namespace Homework1
                 var duckname = ducks[j].GetProperty("title").ToString();
                 var allprice = ducks[j].FindElement(By.CssSelector(".price-wrapper")).GetProperty("innerText").ToString();
                 ducks[j].Click();
-                wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+                wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+                //  wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
                 var header = driver.FindElement(By.CssSelector("h1")).GetProperty("textContent");
                 var allprice_ = driver.FindElement(By.CssSelector(".price-wrapper")).GetProperty("innerText").ToString();
                 Assert.AreEqual(duckname, header); //task 10.a
@@ -239,7 +246,8 @@ namespace Homework1
                 else throw new Exception("Акционная цена не крупнее обычной!");
 
                 ducks[j].Click();
-                wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+                wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+                //   wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
 
                 var regularpricecolor_ = driver.FindElement(By.CssSelector(".regular-price")).GetCssValue("color");
                 var textdecoration_ = driver.FindElement(By.CssSelector(".regular-price")).GetCssValue("text-decoration-line");
@@ -276,7 +284,8 @@ namespace Homework1
             driver.Url = "http://localhost/litecart/";
             var newuser = driver.FindElement(By.XPath($"//*[@id='box-account-login']//a"));
             newuser.Click();
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+            // wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
 
             RegistrationUser();
             UserLogout();
@@ -343,10 +352,12 @@ namespace Homework1
         /// </summary>
         public void UserLogout()
         {
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.Id("box-account"))));
+            //  wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.Id("box-account"))));
+            wait.Until(wd => driver.FindElement(By.Id("box-account")).Displayed && driver.FindElement(By.Id("box-account")).Enabled);
             var logout = driver.FindElements(By.CssSelector("[id=box-account] a"))[3];
             logout.Click();
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("[id=box-account-login] a"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector("[id=box-account-login] a")).Displayed && driver.FindElement(By.CssSelector("[id=box-account-login] a")).Enabled);
+            // wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("[id=box-account-login] a"))));
         }
 
         /// <summary>
@@ -360,7 +371,8 @@ namespace Homework1
             logindata.SendKeys(password);
             logindata = driver.FindElement(By.Name("login"));
             logindata.Click();
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.Id("box-account"))));
+            wait.Until(wd => driver.FindElement(By.Id("box-account")).Displayed && driver.FindElement(By.Id("box-account")).Enabled);
+            // wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.Id("box-account"))));
         }
 
         [Test, Order(9)]
@@ -370,27 +382,32 @@ namespace Homework1
 
             var catalogButton = driver.FindElements(By.CssSelector(".name"))[1];
             catalogButton.Click();
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+            // wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
             var addNewProduct = driver.FindElements(By.CssSelector(".button"))[1];
             addNewProduct.Click();
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+            // wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
 
             //заполняем вкладку1 по продукту
             FillDataGeneral();
 
             //заполняем вкладку2 по продукту
             driver.FindElement(By.CssSelector("[href='#tab-information']")).Click();
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("[name=manufacturer_id]"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector("[name=manufacturer_id]")).Displayed && driver.FindElement(By.CssSelector("[name=manufacturer_id]")).Enabled);
+            // wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("[name=manufacturer_id]"))));
             FillDataInformation();
 
             //заполняем вкладку3 по продукту
             driver.FindElement(By.CssSelector("[href='#tab-prices']")).Click();
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("[name = purchase_price]"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector("[name = purchase_price]")).Displayed && driver.FindElement(By.CssSelector("[name = purchase_price]")).Enabled);
+            // wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("[name = purchase_price]"))));
             FillDataPrices();
             SaveData();
 
             //проверка что элемент сохранился
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+            // wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
             var elements = driver.FindElements(By.CssSelector(".dataTable a"));
             List<string> ElementNames = new List<string>();
             foreach (var element in elements)
@@ -413,13 +430,15 @@ namespace Homework1
             driver.FindElement(By.Name("password")).SendKeys("admin");
             driver.FindElement(By.Name("login")).Click();
             //Cookie testCookie = driver.Manage().Cookies.GetCookieNamed("language_code");
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.ClassName("logotype"))));
+            wait.Until(wd => driver.FindElement(By.ClassName("logotype")).Displayed && driver.FindElement(By.ClassName("logotype")).Enabled);
+            // wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.ClassName("logotype"))));
 
         }
 
         public void FillDataGeneral()
         {
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElements(By.CssSelector("[type=radio]"))[0]));
+            wait.Until(wd => driver.FindElements(By.CssSelector("[type=radio]"))[0].Displayed && driver.FindElements(By.CssSelector("[type=radio]"))[0].Enabled);
+            //  wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElements(By.CssSelector("[type=radio]"))[0]));
             name = RandomUser();
             driver.FindElement(By.CssSelector("[name='name[en]']")).SendKeys(name);
             Thread.Sleep(2000);
@@ -428,7 +447,8 @@ namespace Homework1
             driver.FindElement(By.CssSelector("[name=quantity]")).SendKeys("45");
             driver.FindElement(By.CssSelector("[name=sold_out_status_id]")).Click();
             var t1 = driver.FindElement(By.CssSelector("[name=sold_out_status_id]"));
-            wait.Until(ExpectedConditions.ElementToBeClickable(t1.FindElements(By.CssSelector("option"))[2]));
+            wait.Until(wd => driver.FindElements(By.CssSelector("option"))[2].Displayed && driver.FindElements(By.CssSelector("option"))[2].Enabled);
+            //  wait.Until(ExpectedConditions.ElementToBeClickable(t1.FindElements(By.CssSelector("option"))[2]));
             t1.FindElements(By.CssSelector("option"))[2].Click();
             string FilePath = AppDomain.CurrentDomain.BaseDirectory + $"TestData\\flowers.png";
             driver.FindElement(By.CssSelector("[type=file]")).SendKeys(FilePath);
@@ -454,7 +474,8 @@ namespace Homework1
         public void SaveData()
         {
             driver.FindElement(By.CssSelector("[name=save]")).Click();
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+            // wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
         }
 
         [Test, Order(10)]
@@ -462,7 +483,8 @@ namespace Homework1
         {
             //open page
             driver.Url = "http://localhost/litecart/";
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector(".general-0"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector(".general-0")).Displayed && driver.FindElement(By.CssSelector(".general-0")).Enabled);
+            //  wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector(".general-0"))));
 
             AddToCart();
             GoToMainPage();
@@ -471,10 +493,12 @@ namespace Homework1
             AddToCart();
 
             driver.FindElements(By.CssSelector(".link"))[0].Click();
-            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[name=confirm_order]")));
+            wait.Until(wd => driver.FindElement(By.CssSelector("[name=confirm_order]")).Displayed);
+            //  wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[name=confirm_order]")));
 
             //костыль, чтоб не крутились картинки
-            wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector(".shortcuts li a")));
+            wait.Until(wd => driver.FindElement(By.CssSelector(".shortcuts li a")).Displayed && driver.FindElement(By.CssSelector(".shortcuts li a")).Enabled);
+            //  wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector(".shortcuts li a")));
             var inacts = driver.FindElements(By.CssSelector(".shortcuts li a"));
             foreach (var inact in inacts)
             {
@@ -484,7 +508,8 @@ namespace Homework1
 
             inacts[0].Click();
 
-            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[name=remove_cart_item]")));
+            wait.Until(wd => driver.FindElement(By.CssSelector("[name=remove_cart_item]")).Displayed);
+            //  wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[name=remove_cart_item]")));
 
             var x1 = driver.FindElements(By.CssSelector(".sku"));
             int x2 = Int32.Parse(x1.Count().ToString());
@@ -502,7 +527,8 @@ namespace Homework1
         {
             //click first product
             driver.FindElements(By.CssSelector("li a.link"))[0].Click();
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+            //wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
 
             //check  counter of products
             var counter = driver.FindElements(By.CssSelector(".quantity"))[0].GetAttribute("textContent");
@@ -528,7 +554,8 @@ namespace Homework1
         {
             //goto main page
             driver.Navigate().Back();
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector(".general-0"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector(".general-0")).Displayed && driver.FindElement(By.CssSelector(".general-0")).Enabled);
+            //  wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector(".general-0"))));
         }
 
         [Test, Order(11)]
@@ -536,9 +563,11 @@ namespace Homework1
         {
             login();
             driver.FindElements(By.CssSelector("[id=app-]"))[2].Click();
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+            // wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
             driver.FindElements(By.CssSelector(".fa-pencil"))[2].Click();
-            wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
+            wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+            //  wait.Until(ExpectedConditions.ElementToBeClickable(driver.FindElement(By.CssSelector("h1"))));
             var links = driver.FindElements(By.CssSelector(".fa-external-link"));
             for (var i = 0; i < links.Count; i++)
             {
@@ -552,6 +581,10 @@ namespace Homework1
                     if (mainWindow != window)
                     {
                         driver.SwitchTo().Window(window);
+                        foreach (LogEntry l in driver.Manage().Logs.GetLog(LogType.Browser))
+                        {
+                            Console.WriteLine(l);
+                        }
                         break;
                     }
                 }
@@ -560,5 +593,31 @@ namespace Homework1
             }
         }
 
+        [Test, Order(12)]
+        public void Test_12()
+        {
+            login();
+            driver.FindElements(By.CssSelector("[id=app-]"))[1].Click();
+            wait.Until(wd => driver.FindElement(By.CssSelector("h1")).Displayed && driver.FindElement(By.CssSelector("h1")).Enabled);
+            driver.FindElements(By.CssSelector("[href*='category_id=1']"))[0].Click();
+            wait.Until(wd => driver.FindElement(By.ClassName("fa-folder")).Displayed && driver.FindElement(By.ClassName("fa-folder")).Enabled);
+
+            for (var i = 0; i < driver.FindElements(By.CssSelector("[href*='product_id']")).Count; i+=2)
+            {
+                driver.FindElements(By.CssSelector("[href*='product_id']"))[i].Click();
+                wait.Until(wd => driver.FindElement(By.Id("table-images")).Displayed && driver.FindElement(By.Id("table-images")).Enabled);
+                foreach (LogEntry l in driver.Manage().Logs.GetLog(LogType.Browser))
+                {
+                    Console.WriteLine(l);
+                }
+                var t1 = driver.Manage().Logs.GetLog(LogType.Browser);
+                Assert.AreNotEqual(t1, null);
+                driver.Navigate().Back();
+
+            }
+        }
+
     }
 }
+
+
