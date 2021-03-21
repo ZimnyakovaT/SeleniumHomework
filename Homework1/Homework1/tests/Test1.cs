@@ -10,14 +10,16 @@ using OpenQA.Selenium.IE;
 using NUnit.Framework;
 using System.Drawing.Imaging;
 
+
 namespace Homework1
 {
     [TestFixture]
     [Parallelizable(scope: ParallelScope.All)]
     public class Test1 : TestBase
     {
+        //private Proxy testProxy = new Proxy();
 
-       [SetUp]
+        [SetUp]
         public override void start()
         {
 
@@ -27,9 +29,23 @@ namespace Homework1
                 wait = new WebDriverWait(driver, new TimeSpan(0, 0, 10));
                 return;
             }*/
-            
+
+           // RemoteBrowserMobProxyClient proxy = new RemoteBrowserMobProxyClient(new Uri("http://127.0.0.1:8877"));
+           // proxy.
+            //proxy.start(0);
+            //BrowserMobProxy  bmp = new System.Net.WebProxy("127.0.0.1", 8866);
+
+            //testProxy.Kind = ProxyKind.Manual;
+            //testProxy.IsAutoDetect = false;
+            //testProxy.HttpProxy =
+            //testProxy.SslProxy = "127.0.0.1:8877";
+
             ChromeOptions options = new ChromeOptions();
             options.AddArguments("start-fullscreen");
+
+            //options.Proxy = testProxy;
+            //options.AddArgument("ignore-certificate-errors");
+
             driver = new EventFiringWebDriver( new ChromeDriver(options));
             driver.FindingElement += (sender, e) => Console.WriteLine(e.FindMethod);
             driver.FindElementCompleted += (sender, e) => Console.WriteLine(e.FindMethod + " found");
@@ -37,7 +53,6 @@ namespace Homework1
             tlDriver.Value = driver;
             wait = new WebDriverWait(driver, new TimeSpan(0, 0, 10));
 
-            
         }
 
         [Test, Order(1)]
@@ -54,6 +69,9 @@ namespace Homework1
             //     driver.FindElement(By.Name("btnK")).Click();
             // }
             //   wait.Until(ExpectedConditions.TitleIs("webdriver - Поиск в Google"));
+
+            
+
         }
 
     }
